@@ -1,5 +1,6 @@
 package com.firedevit.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,6 +32,17 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	 */
 
 	public Optional<Usuario> findByNomeContainingIgnoreCase(String nome);
+	
+	/**
+	 * Método que procura na tabela usuario o atributo Name
+	 * 
+	 * @author Abner
+	 * @param userName
+	 * @return List com usuários
+	 * 
+	 */
+	
+	public List<Usuario> findUsersByNomeContainingIgnoreCase(String name);
 
 	/**
 	 * Método que procura na tabela usuario o atributo userName
@@ -42,7 +54,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	 */
 
 	public Optional<Usuario> findByUserNameContainingIgnoreCase(String userName);
-
+	
 	/**
 	 * Método que procura na tabela usuario o atributo email
 	 * 
