@@ -35,13 +35,13 @@ Heroku
 
 # Como fazer o código rodar:
 
-- Requisitos:
+Requisitos:
  - Ter uma IDE para rodar o projeto.
  - Ter o postman ou insomnia baixado
 
-- Passos
+Passos
  - Fazer o git clone do url do repositório pro seu workspace (Ou baixar o zip dele).
- - Importar o projeto Maven com o endereço do local onde está.
+ - Importar o projeto Maven na IDE e selecionar o endereço do local onde baixou.
  - Selecionar o Projeto na Sua IDE e Rodar como Java Application
  - Entrar no http://localhost:8084/swagger-ui/ pelo seu navegador
  - Testar os endpoints e passar o parâmetro/preencher o body quando necessário.
