@@ -30,7 +30,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	 * 
 	 */
 
-	public Optional<Usuario> findByNome(String nome);
+	public Optional<Usuario> findByNomeContainingIgnoreCase(String nome);
 
 	/**
 	 * Método que procura na tabela usuario o atributo userName
@@ -41,7 +41,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	 * 
 	 */
 
-	public Optional<Usuario> findByUserName(String userName);
+	public Optional<Usuario> findByUserNameContainingIgnoreCase(String userName);
 
 	/**
 	 * Método que procura na tabela usuario o atributo email
