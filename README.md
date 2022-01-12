@@ -31,7 +31,7 @@ Heroku
  - Adicionei uma nova aplicação e a nomeei
  - Adicionei o Resource do Postgree no Heroku
  - Selecionei a Branch "heroku" desse repositório
- - Cliquei pra fazer o deploy pela branch, mas deu um erro. Pesquisei no stackoverflow e parece que é um erro na versão do java.
+ - Cliquei pra fazer o deploy pela branch, mas deu um erro. Pesquisei no stackoverflow e parece que é um erro na versão do java que até o momento não deu pra resolver
 
 # Como fazer o código rodar:
 
