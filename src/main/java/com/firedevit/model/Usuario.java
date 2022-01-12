@@ -9,12 +9,16 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 public class Usuario {
 
 	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long idUsuario;
 	private String nome;
 	private String userName;
+	
+	@ApiModelProperty(example = "email@domínio.com.br")
 	private @NotNull @Email String email;
 	private @NotBlank @Size(min=8) String senha;
 	
