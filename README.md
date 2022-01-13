@@ -1,29 +1,49 @@
 # Challenge Back-end | FireDev
 
-Então, o desafio é bem simples. Queremos avaliar seus conhecimentos com API REST, arquitetura de software e estrutura de código.
+Olá, esse é um desafio da FIreDev que realizei.
 
-## O desafio:
- Você precisa apenas fazer um CRUD(cadastro, alterarção, buscar e excluir) da entidade Usuário.
- Só isso mesmo, sem pegadinhas, só fica ligado nas regras abaixo.
- 
- ### Regras
- Da lista abaixo, faça tudo que você sabe fazer de acordo com seu nível de conhecimento, porém não são todos obrigatórios, apenas contam ponto.
- 
- 1. Utilize os melhores padrões de API Rest.
- 2. Defina uma boa arquitetura para sua aplicação.
- 3. Você pode criar uma base de dados ou fazer de outra maneira que ache mais fácil, porém indicamos a criação de uma base de dados para avaliação completa.
- 4. Valide os dados de entrada.
- 5. Crie pelo menos uma exeção de negócio.
- 6. Bonus (Crie autenticação do usuário com JWT)
- 7. Você pode usar algum framework de mercado, como Laravel no PHP, Express no Node ou Sping Boot no Java, entre outros.
- 
- 
- ### Entrega
- Você tem 5 dias para entregar o projeto, se precisar de mais tempo converse com o gestor da vaga.
- 
- De preferência faço um 'Fork' nesse projeto e utilize o repositório para nos entregar o código, porém pode ser entregue em um arquivo compactado via e-mail.
- 
- Se tiver alguma dúvida entre em contato com o gestor da vaga.
- 
- #BOA SORTE!
- 
+# Como fiz:
+Configuração do projeto
+  *Criei gerei o zip do projeto no https://start.spring.io/ com as seguintes dependências:
+  *  Spring Web já que seria uma aplicação web
+  *  Spring Boot DevTools - para recarregar a aplicação de forma rápida
+  *  Spring Boot JPA - para trabalhar com a persistência de dados
+  *  Validation - Para trabalhar com condições para os atributos da model
+  *  MySQL Driver - Para me conectar com o MySQL
+  
+ Configuração: 
+  - Configurei o applicatoin.properties pra se comunicar com o meu MySQL, e defini a porta em 8085, mas depois mudei pra 8084 (em outras postas estava dando erro)
+
+CRUD/testagem
+  - Fiz a model de usuário com os atributos de id, nome, email, senha e user name
+  - Configurei o repositório pra fazer busca por esses atributos (menos por senha)
+  - Fiz um CRUD simples pra testar no Postman
+  - Inseri dados de um usuário pro MySQL pra fazer os testes com os GET's
+
+Swagger
+  - Fiz os testes e fiz as modificações necessárias.
+  - Adicionei a dependência springFox pra usar o Swagger
+  - Configurei  o Swagger no SwaggerConfig
+  - Testei os endpoints novamente pelo Swagger
+
+Heroku
+ - Adicionei a dependência do PostgreeSQl pra usar o Postgree do Heroku
+ - Adicionei uma nova aplicação e a nomeei
+ - Adicionei o Resource do Postgree no Heroku
+ - Selecionei a Branch "heroku" desse repositório
+ - Cliquei pra fazer o deploy pela branch, mas deu um erro. Pesquisei no stackoverflow e parece que é um erro na versão do java que até o momento não deu pra resolver
+
+# Como fazer o código rodar:
+
+Requisitos:
+ - Ter uma IDE para rodar o projeto.
+ - Ter o postman ou insomnia baixado;
+ - Baixar o Banco de dados MySQL
+
+Passos
+ - Fazer o git clone do url do repositório pro seu workspace (Ou baixar o zip dele).
+ - Importar o projeto Maven na IDE e selecionar o endereço do local onde baixou.
+ - Trocar a minha senha do db para a sua no application.properties
+ - Selecionar o Projeto na Sua IDE e Rodar como Java Application
+ - Entrar no http://localhost:8084/swagger-ui/ pelo seu navegador
+ - Testar os endpoints e passar o parâmetro/preencher o body quando necessário.
