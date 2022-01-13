@@ -37,11 +37,13 @@ Heroku
 
 Requisitos:
  - Ter uma IDE para rodar o projeto.
- - Ter o postman ou insomnia baixado
+ - Ter o postman ou insomnia baixado;
+ - Baixar o Banco de dados MySQL
 
 Passos
  - Fazer o git clone do url do repositório pro seu workspace (Ou baixar o zip dele).
  - Importar o projeto Maven na IDE e selecionar o endereço do local onde baixou.
+ - Trocar a minha senha do db para a sua no application.properties
  - Selecionar o Projeto na Sua IDE e Rodar como Java Application
  - Entrar no http://localhost:8084/swagger-ui/ pelo seu navegador
  - Testar os endpoints e passar o parâmetro/preencher o body quando necessário.
