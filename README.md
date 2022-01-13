@@ -36,7 +36,7 @@ Heroku
 # Como fazer o código rodar:
 
 Requisitos:
- - Ter uma IDE para rodar o projeto.
+ - Ter uma JRE se quiser somente rodar o projeto.
  - Ter o postman ou insomnia baixado;
  - Baixar o Banco de dados MySQL
 
