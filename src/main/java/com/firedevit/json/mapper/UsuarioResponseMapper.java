@@ -13,4 +13,5 @@ public class UsuarioResponseMapper {
                 .email(usuario.getEmail())
                 .build();
     }
+    private UsuarioResponseMapper(){}
 }
