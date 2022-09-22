@@ -48,9 +48,7 @@ public class UsuarioService {
     public void cadastraUsuario(UsuarioForm usuario) {
         try {
             Optional<Usuario> optionalUsuario = repository.findByEmail(usuario.getEmail());
-            if (optionalUsuario.isPresent()) {
-                throw new RequestException("Email em uso para outro usuário.");
-            } else {
+            if (optionalUsuario.isEmpty()) {
                 Usuario usuarioParaCadastrar = Usuario.builder()
                         .idUsuario(usuario.getIdUsuario())
                         .nome(usuario.getNome())
@@ -59,6 +57,8 @@ public class UsuarioService {
                         .senha(usuario.getSenha())
                         .build();
                 repository.save(usuarioParaCadastrar);
+            } else {
+                throw new RequestException("Email em uso para outro usuário.");
             }
         } catch (Exception e) {
             log.error("Erro ao cadastrar de usuário.");
@@ -86,10 +86,10 @@ public class UsuarioService {
             Optional<Usuario> optionalUsuario = repository.findById(id);
             if (optionalUsuario.isPresent()) {
                 return optionalUsuario.map(UsuarioResponseMapper::fromEntityToResponse);
+            }else{
+                log.error(USUARIO_NAO_ENCONTRADO);
+                throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
             }
-            log.error(USUARIO_NAO_ENCONTRADO);
-            throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
-
         } catch (Exception e) {
             log.error("Erro ao buscar usuário por id.");
             throw new RequestException("Erro ao buscar usuário por id.");
@@ -101,10 +101,10 @@ public class UsuarioService {
             Optional<Usuario> optionalUsuario = repository.findByNomeContainingIgnoreCase(nome);
             if (optionalUsuario.isPresent()) {
                 return optionalUsuario.map(UsuarioResponseMapper::fromEntityToResponse);
+            }else{
+                log.error(USUARIO_NAO_ENCONTRADO);
+                throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
             }
-            log.error(USUARIO_NAO_ENCONTRADO);
-            throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
-
         } catch (Exception e) {
             log.error("Erro ao buscar usuário por nome.");
             throw new RequestException("Erro ao buscar usuário por nome.");
