@@ -10,9 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ public class UsuarioService {
 
     public static final String USUARIO_NAO_ENCONTRADO = "Usuário não encontrado.";
 
-    public Optional<Usuario> atualizaDados(UsuarioForm usuario) {
+    public Optional<UsuarioResponse> atualizaDados(UsuarioForm usuario) {
         try {
             Optional<Usuario> optionalUsuario = repository.findById(usuario.getIdUsuario());
             if (optionalUsuario.isPresent()) {
@@ -34,7 +34,7 @@ public class UsuarioService {
                 usuarioAtualizado.setEmail(usuario.getEmail());
                 usuarioAtualizado.setSenha(usuario.getSenha());
                 usuarioAtualizado.setUserName(usuario.getUserName());
-                return Optional.of(usuarioAtualizado);
+                return Optional.of(usuarioAtualizado).map(UsuarioResponseMapper::fromEntityToResponse);
             }
             log.error(USUARIO_NAO_ENCONTRADO);
             throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
@@ -43,7 +43,6 @@ public class UsuarioService {
             log.error("Erro ao atualizar dados de usuário.");
             throw new RequestException("Erro ao atualizar dados de usuário.");
         }
-
     }
 
     public void cadastraUsuario(UsuarioForm usuario) {
@@ -51,7 +50,7 @@ public class UsuarioService {
             Optional<Usuario> optionalUsuario = repository.findByEmail(usuario.getEmail());
             if (optionalUsuario.isPresent()) {
                 throw new RequestException("Email em uso para outro usuário.");
-            }else{
+            } else {
                 Usuario usuarioParaCadastrar = Usuario.builder()
                         .idUsuario(usuario.getIdUsuario())
                         .nome(usuario.getNome())
@@ -72,7 +71,7 @@ public class UsuarioService {
             List<Usuario> lista = repository.findAll();
 
             if (lista.isEmpty()) {
-                return null;
+                return Collections.emptyList();
             } else {
                 return lista;
             }
@@ -82,11 +81,11 @@ public class UsuarioService {
         }
     }
 
-    public Optional<Usuario> getuserById(long id) {
+    public Optional<UsuarioResponse> getuserById(long id) {
         try {
             Optional<Usuario> optionalUsuario = repository.findById(id);
             if (optionalUsuario.isPresent()) {
-                return optionalUsuario;
+                return optionalUsuario.map(UsuarioResponseMapper::fromEntityToResponse);
             }
             log.error(USUARIO_NAO_ENCONTRADO);
             throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
@@ -97,11 +96,11 @@ public class UsuarioService {
         }
     }
 
-    public Optional<Usuario> getUserByNome(String nome) {
+    public Optional<UsuarioResponse> getUserByNome(String nome) {
         try {
             Optional<Usuario> optionalUsuario = repository.findByNomeContainingIgnoreCase(nome);
             if (optionalUsuario.isPresent()) {
-                return optionalUsuario;
+                return optionalUsuario.map(UsuarioResponseMapper::fromEntityToResponse);
             }
             log.error(USUARIO_NAO_ENCONTRADO);
             throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
@@ -118,7 +117,7 @@ public class UsuarioService {
             List<Usuario> lista = repository.findUsersByNomeContainingIgnoreCase(nome);
 
             if (lista.isEmpty()) {
-                return null;
+                return Collections.emptyList();
             } else {
                 return lista;
             }
@@ -134,9 +133,10 @@ public class UsuarioService {
             Optional<Usuario> usuario = repository.findById(id);
             if (usuario.isPresent()) {
                 repository.deleteById(id);
+            } else {
+                log.error(USUARIO_NAO_ENCONTRADO);
+                throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
             }
-            log.error(USUARIO_NAO_ENCONTRADO);
-            throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
         } catch (Exception e) {
             log.error("Erro ao deletar usuário.");
             throw new RequestException("Erro ao deletar usuário.");

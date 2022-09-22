@@ -2,6 +2,7 @@ package com.firedevit.services;
 
 import com.firedevit.exceptions.RequestException;
 import com.firedevit.json.UsuarioForm;
+import com.firedevit.json.UsuarioResponse;
 import com.firedevit.model.Usuario;
 import com.firedevit.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,7 +20,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {
-
     @InjectMocks
     private UsuarioService service;
 
@@ -35,12 +36,22 @@ class UsuarioServiceTest {
 
     public static final String EMAIL = "joao@gmail.com";
 
+    private static final String EMAIL_SEM_ARROBA = "joaogmail.com";
+
+    public static final String EMAIL_SEM_NOME = "@gmail.com";
+
+    public static final String EMAIL_SEM_PONTO = "joao@gmail";
+
     public static final String SENHA = "senhaforte123";
+
+    private static final String SENHA_CURTA = "1234567";
+
+    public static final String ERRO_AO_ATUALIZAR_USUARIO_MENSAGEM = "Erro ao atualizar dados de usuário.";
 
     @Test
     void testAtualizaDados() {
         doReturn(getOptionalUsuario()).when(repository).findById(ID);
-        Optional<Usuario> usuarioAtualizado = service.atualizaDados(getUsuarioParaAtualizar());
+        Optional<UsuarioResponse> usuarioAtualizado = service.atualizaDados(getUsuarioParaAtualizar());
         assertNotNull(usuarioAtualizado);
         assertEquals(usuarioAtualizado.get().getNome(), getUsuarioParaAtualizar().getNome());
         verify(repository).findById(ID);
@@ -65,6 +76,31 @@ class UsuarioServiceTest {
         doThrow(RequestException.class).when(repository).findById(ID);
         Exception exception = assertThrows(Exception.class, () -> service.atualizaDados(getUsuarioSenhaCurta()));
         assertNotNull(exception);
+        assertEquals(ERRO_AO_ATUALIZAR_USUARIO_MENSAGEM, exception.getMessage());
+    }
+
+    @Test
+    void testAtualizaDadosEmailSemArroba() {
+        doThrow(ConstraintViolationException.class).when(repository).findById(ID);
+        Exception exception = assertThrows(Exception.class, () -> service.atualizaDados(getUsuarioComEmailSemArroba()));
+        assertNotNull(exception);
+        assertEquals(ERRO_AO_ATUALIZAR_USUARIO_MENSAGEM, exception.getMessage());
+    }
+
+    @Test
+    void testAtualizaDadosEmailSemNome() {
+        doThrow(ConstraintViolationException.class).when(repository).findById(ID);
+        Exception exception = assertThrows(Exception.class, () -> service.atualizaDados(getUsuarioComEmailSemNome()));
+        assertNotNull(exception);
+        assertEquals(ERRO_AO_ATUALIZAR_USUARIO_MENSAGEM, exception.getMessage());
+    }
+
+    @Test
+    void testAtualizaDadosEmailSemPontoCom() {
+        doThrow(ConstraintViolationException.class).when(repository).findById(ID);
+        Exception exception = assertThrows(Exception.class, () -> service.atualizaDados(getUsuarioComEmailSemPontoCom()));
+        assertNotNull(exception);
+        assertEquals(ERRO_AO_ATUALIZAR_USUARIO_MENSAGEM, exception.getMessage());
     }
 
     private Optional<Usuario> getOptionalUsuario() {
@@ -75,16 +111,6 @@ class UsuarioServiceTest {
                 .senha(SENHA)
                 .userName(USERNAME)
                 .build());
-    }
-
-    private Usuario getUsuario() {
-        return Usuario.builder()
-                .idUsuario(ID)
-                .email(EMAIL)
-                .nome(NOME)
-                .senha(SENHA)
-                .userName(USERNAME)
-                .build();
     }
 
     private UsuarioForm getUsuarioParaAtualizar() {
@@ -100,7 +126,28 @@ class UsuarioServiceTest {
     private UsuarioForm getUsuarioSenhaCurta() {
         return UsuarioForm.builder()
                 .idUsuario(ID)
-                .senha("12345")
+                .senha(SENHA_CURTA)
+                .build();
+    }
+
+    private UsuarioForm getUsuarioComEmailSemArroba() {
+        return UsuarioForm.builder()
+                .idUsuario(ID)
+                .email(EMAIL_SEM_ARROBA)
+                .build();
+    }
+
+    private UsuarioForm getUsuarioComEmailSemNome() {
+        return UsuarioForm.builder()
+                .idUsuario(ID)
+                .email(EMAIL_SEM_NOME)
+                .build();
+    }
+
+    private UsuarioForm getUsuarioComEmailSemPontoCom() {
+        return UsuarioForm.builder()
+                .idUsuario(ID)
+                .email(EMAIL_SEM_PONTO)
                 .build();
     }
 }
