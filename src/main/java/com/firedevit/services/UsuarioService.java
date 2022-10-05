@@ -1,5 +1,6 @@
 package com.firedevit.services;
 
+import com.firedevit.exceptions.ModelException;
 import com.firedevit.exceptions.RequestException;
 import com.firedevit.json.UsuarioForm;
 import com.firedevit.json.UsuarioResponse;
@@ -29,17 +30,24 @@ public class UsuarioService {
         try {
             Optional<Usuario> optionalUsuario = repository.findById(usuario.getIdUsuario());
             if (optionalUsuario.isPresent()) {
-                Usuario usuarioAtualizado = optionalUsuario.get();
-                usuarioAtualizado.setNome(usuario.getNome());
-                usuarioAtualizado.setEmail(usuario.getEmail());
-                usuarioAtualizado.setSenha(usuario.getSenha());
-                usuarioAtualizado.setUserName(usuario.getUserName());
-                return Optional.of(usuarioAtualizado).map(UsuarioResponseMapper::fromEntityToResponse);
+                if (usuario.getSenha().length() >= 8) {
+                    Usuario usuarioAtualizado = optionalUsuario.get();
+                    usuarioAtualizado.setNome(usuario.getNome());
+                    usuarioAtualizado.setEmail(usuario.getEmail());
+                    usuarioAtualizado.setSenha(usuario.getSenha());
+                    usuarioAtualizado.setUserName(usuario.getUserName());
+                    return Optional.of(usuarioAtualizado).map(UsuarioResponseMapper::fromEntityToResponse);
+                }
+                throw new ModelException("A senha deve ser maior que 8 caracteres.");
             }
+            throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
+        } catch (ResourceNotFoundException exception) {
             log.error(USUARIO_NAO_ENCONTRADO);
             throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
+        } catch (ModelException exception) {
+            log.error("A senha deve ser maior que 8 caracteres.");
+            throw new ModelException(exception.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("Erro ao atualizar dados de usuário.");
             throw new RequestException("Erro ao atualizar dados de usuário.");
         }
@@ -86,10 +94,12 @@ public class UsuarioService {
             Optional<Usuario> optionalUsuario = repository.findById(id);
             if (optionalUsuario.isPresent()) {
                 return optionalUsuario.map(UsuarioResponseMapper::fromEntityToResponse);
-            }else{
-                log.error(USUARIO_NAO_ENCONTRADO);
+            } else {
                 throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
             }
+        } catch (ResourceNotFoundException exception) {
+            log.error(USUARIO_NAO_ENCONTRADO);
+            throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
         } catch (Exception e) {
             log.error("Erro ao buscar usuário por id.");
             throw new RequestException("Erro ao buscar usuário por id.");
@@ -101,10 +111,12 @@ public class UsuarioService {
             Optional<Usuario> optionalUsuario = repository.findByNomeContainingIgnoreCase(nome);
             if (optionalUsuario.isPresent()) {
                 return optionalUsuario.map(UsuarioResponseMapper::fromEntityToResponse);
-            }else{
-                log.error(USUARIO_NAO_ENCONTRADO);
+            } else {
                 throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
             }
+        } catch (ResourceNotFoundException exception) {
+            log.error(USUARIO_NAO_ENCONTRADO);
+            throw new ResourceNotFoundException(exception.getMessage());
         } catch (Exception e) {
             log.error("Erro ao buscar usuário por nome.");
             throw new RequestException("Erro ao buscar usuário por nome.");
@@ -128,15 +140,18 @@ public class UsuarioService {
 
     }
 
-    public void deletarUsuarioById(long id) {
+    public String deletarUsuarioById(long id) {
         try {
             Optional<Usuario> usuario = repository.findById(id);
             if (usuario.isPresent()) {
                 repository.deleteById(id);
+                return "Usuário deletado";
             } else {
-                log.error(USUARIO_NAO_ENCONTRADO);
                 throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
             }
+        } catch (ResourceNotFoundException exception) {
+            log.error(USUARIO_NAO_ENCONTRADO);
+            throw new ResourceNotFoundException(USUARIO_NAO_ENCONTRADO);
         } catch (Exception e) {
             log.error("Erro ao deletar usuário.");
             throw new RequestException("Erro ao deletar usuário.");
