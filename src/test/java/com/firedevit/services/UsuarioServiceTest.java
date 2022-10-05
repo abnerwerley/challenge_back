@@ -64,29 +64,27 @@ class UsuarioServiceTest {
     void testAtualizaDadosIdInexistente() {
         doThrow(ResourceNotFoundException.class).when(repository).findById(ID);
         Exception exception = assertThrows(Exception.class, () -> service.atualizaDados(getUsuarioParaAtualizar()));
-        assertNotNull(exception);
+        assertEquals(USUARIO_NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
     void testAtualizaDadosUsuarioComSenhaCurta() {
-        doThrow(RequestException.class).when(repository).findById(ID);
+        doReturn(getOptionalUsuario()).when(repository).findById(ID);
         Exception exception = assertThrows(Exception.class, () -> service.atualizaDados(getUsuarioSenhaCurta()));
-        assertNotNull(exception);
+        assertEquals("A senha deve ser maior que 8 caracteres.", exception.getMessage());
     }
 
     @Test
     void testAtualizaDadosException() {
-        doThrow(RequestException.class).when(repository).findById(ID);
-        Exception exception = assertThrows(Exception.class, () -> service.atualizaDados(getUsuarioSenhaCurta()));
-        assertNotNull(exception);
+        doReturn(getOptionalUsuario()).when(repository).findById(ID);
+        Exception exception = assertThrows(Exception.class, () -> service.atualizaDados(getUsuarioParaAtualizarException()));
         assertEquals(ERRO_AO_ATUALIZAR_USUARIO_MENSAGEM, exception.getMessage());
     }
 
     @Test
     void testAtualizaDadosEmailSemArroba() {
-        doThrow(ConstraintViolationException.class).when(repository).findById(ID);
+        doReturn(getOptionalUsuario()).when(repository).findById(ID);
         Exception exception = assertThrows(Exception.class, () -> service.atualizaDados(getUsuarioComEmailSemArroba()));
-        assertNotNull(exception);
         assertEquals(ERRO_AO_ATUALIZAR_USUARIO_MENSAGEM, exception.getMessage());
     }
 
@@ -94,7 +92,6 @@ class UsuarioServiceTest {
     void testAtualizaDadosEmailSemNome() {
         doThrow(ConstraintViolationException.class).when(repository).findById(ID);
         Exception exception = assertThrows(Exception.class, () -> service.atualizaDados(getUsuarioComEmailSemNome()));
-        assertNotNull(exception);
         assertEquals(ERRO_AO_ATUALIZAR_USUARIO_MENSAGEM, exception.getMessage());
     }
 
@@ -102,7 +99,6 @@ class UsuarioServiceTest {
     void testAtualizaDadosEmailSemPontoCom() {
         doThrow(ConstraintViolationException.class).when(repository).findById(ID);
         Exception exception = assertThrows(Exception.class, () -> service.atualizaDados(getUsuarioComEmailSemPontoCom()));
-        assertNotNull(exception);
         assertEquals(ERRO_AO_ATUALIZAR_USUARIO_MENSAGEM, exception.getMessage());
     }
 
@@ -119,12 +115,11 @@ class UsuarioServiceTest {
     void testGetuserByIdInexistente() {
         doThrow(ResourceNotFoundException.class).when(repository).findById(ID);
         Exception exception = assertThrows(Exception.class, () -> service.getuserById(ID));
-
-        assertNotNull(exception);
+        assertEquals(USUARIO_NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
-    void testGetUsraByIdException() {
+    void testGetUserByIdException() {
         doThrow(RequestException.class).when(repository).findById(ID);
         Exception exception = assertThrows(Exception.class, () -> service.getuserById(ID));
 
@@ -144,36 +139,36 @@ class UsuarioServiceTest {
     @Test
     void testGetUserByNomResourceNotFoundException() {
         Exception exception = assertThrows(Exception.class, () -> service.getUserByNome(NOME));
-        assertNotNull(exception);
-        //todo dois logs e ResourceNotFoundExcepiton não sendo lançada
+        assertEquals(USUARIO_NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
-    void testGetUserByNomeException(){
-        Exception exception = assertThrows(RequestException.class, () -> service.getUserByNome(NOME));
+    void testGetUserByNomeException() {
+        doReturn(getOptionalUsuario()).when(repository).findByNomeContainingIgnoreCase("");
+        Exception exception = assertThrows(Exception.class, () -> service.getUserByNome(NOME));
         assertNotNull(exception);
         assertEquals("Erro ao buscar usuário por nome.", exception.getMessage());
     }
 
     @Test
-    void testDeletarUsuarioById(){
+    void testDeletarUsuarioById() {
         doReturn(getOptionalUsuario()).when(repository).findById(ID);
-        service.deletarUsuarioById(ID);
+        String deletar = service.deletarUsuarioById(ID);
+        assertNotNull(deletar);
+        verify(repository).findById(ID);
     }
 
     @Test
-    void testDeletarUsuarioByIdResourceNotFoundException(){
+    void testDeletarUsuarioByIdResourceNotFoundException() {
         doThrow(ResourceNotFoundException.class).when(repository).findById(ID);
         Exception exception = assertThrows(Exception.class, () -> service.deletarUsuarioById(ID));
-        assertNotNull(exception);
+        assertEquals(USUARIO_NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
-    void testDeletarUsuarioByIdException(){
+    void testDeletarUsuarioByIdException() {
         doThrow(RequestException.class).when(repository).findById(ID);
         Exception exception = assertThrows(Exception.class, () -> service.deletarUsuarioById(ID));
-
-        assertNotNull(exception);
         assertEquals("Erro ao deletar usuário.", exception.getMessage());
     }
 
@@ -234,5 +229,9 @@ class UsuarioServiceTest {
                 .idUsuario(ID)
                 .email(EMAIL_SEM_PONTO)
                 .build();
+    }
+
+    private UsuarioForm getUsuarioParaAtualizarException() {
+        return UsuarioForm.builder().build();
     }
 }
